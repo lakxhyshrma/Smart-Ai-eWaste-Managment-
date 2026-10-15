@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Waste AI | Intelligent Recycling</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<header class="navbar">
+
+    <a href="#home" class="logo">
+        ♻️ Smart<span>Waste</span> AI
+    </a>
+
+    <nav id="navLinks">
+        <a href="#home">Home</a>
+        <a href="#detect">Detect Waste</a>
+        <a href="#guide">Recycling Guide</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#history">History</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">
+        ☰
+    </button>
+
+</header>
+
+
+<!-- HOME SECTION -->
+
+<section id="home" class="hero">
+
+    <div class="hero-content">
+
+        <span class="badge">🌍 AI FOR A GREENER PLANET</span>
+
+        <h1>
+            Make Waste Sorting
+            <span>Smarter with AI.</span>
+        </h1>
+
+        <p>
+            Upload an image of waste and use artificial intelligence
+            to identify its category and discover appropriate
+            recycling guidance.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="#detect" class="btn btn-primary">
+                Start Detection →
+            </a>
+
+            <a href="#guide" class="btn btn-secondary">
+                Explore Recycling
+            </a>
+
+        </div>
+
+        <div class="hero-stats">
+
+            <div>
+                <h3>AI</h3>
+                <p>Image Analysis</p>
+            </div>
+
+            <div>
+                <h3>5</h3>
+                <p>Waste Categories</p>
+            </div>
+
+            <div>
+                <h3>Eco</h3>
+                <p>Friendly Guidance</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="hero-visual">
+
+        <div class="eco-circle">🌎</div>
+
+        <div class="floating-card card-one">
+            <span>🧴</span>
+            <div>
+                <strong>Plastic</strong>
+                <small>Waste category</small>
+            </div>
+        </div>
+
+        <div class="floating-card card-two">
+            <span>♻️</span>
+            <div>
+                <strong>Recycle Better</strong>
+                <small>Build a cleaner future</small>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CATEGORY CARDS -->
+
+<section class="categories section">
+
+    <div class="section-heading">
+
+        <span class="eyebrow">SMART CLASSIFICATION</span>
+
+        <h2>Know Your Waste</h2>
+
+        <p>
+            Explore common waste categories and learn how to
+            handle different materials responsibly.
+        </p>
+
+    </div>
+
+    <div class="category-grid">
+
+        <article class="category-card">
+            <div class="category-icon">🧴</div>
+            <h3>Plastic</h3>
+            <p>Plastic bottles, containers and packaging.</p>
+        </article>
+
+        <article class="category-card">
+            <div class="category-icon">📄</div>
+            <h3>Paper</h3>
+            <p>Newspapers, sheets and paper products.</p>
+        </article>
+
+        <article class="category-card">
+            <div class="category-icon">🍾</div>
+            <h3>Glass</h3>
+            <p>Glass bottles, jars and containers.</p>
+        </article>
+
+        <article class="category-card">
+            <div class="category-icon">🥫</div>
+            <h3>Metal</h3>
+            <p>Metal cans and recyclable metal items.</p>
+        </article>
+
+        <article class="category-card">
+            <div class="category-icon">📦</div>
+            <h3>Cardboard</h3>
+            <p>Cardboard boxes and packaging.</p>
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- DETECTION SECTION -->
+
+<section id="detect" class="section detect-section">
+
+    <div class="section-heading">
+
+        <span class="eyebrow">AI-POWERED DETECTION</span>
+
+        <h2>Identify Your Waste</h2>
+
+        <p>
+            Upload an image to analyze its waste category.
+        </p>
+
+    </div>
+
+    <div class="detect-container">
+
+        <div class="upload-card">
+
+            <div id="uploadArea" class="upload-area">
+
+                <div class="upload-icon">📸</div>
+
+                <h3>Upload Waste Image</h3>
+
+                <p>Choose an image from your device.</p>
+
+                <label for="imageInput" class="btn btn-primary">
+                    Choose Image
+                </label>
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                    hidden
+                >
+
+                <p class="file-note">
+                    Supported formats depend on your browser.
+                </p>
+
+            </div>
+
+            <div id="previewContainer" class="preview-container hidden">
+
+                <img id="imagePreview" alt="Selected waste image">
+
+                <p id="fileName"></p>
+
+                <button id="removeImage" class="btn btn-secondary">
+                    Remove Image
+                </button>
+
+            </div>
+
+            <button id="analyzeBtn" class="btn btn-primary full-btn" disabled>
+                Analyze Waste →
+            </button>
+
+            <p id="statusMessage" class="status-message" aria-live="polite">
+                Select an image to get started.
+            </p>
+
+        </div>
+
+
+        <!-- RESULT CARD -->
+
+        <div class="result-card">
+
+            <div class="result-header">
+                <span class="result-icon">🤖</span>
+                <div>
+                    <h3>AI Analysis Result</h3>
+                    <p>Your prediction will appear here.</p>
+                </div>
+            </div>
+
+            <div id="emptyResult" class="empty-result">
+
+                <div>🔍</div>
+
+                <h3>Waiting for Analysis</h3>
+
+                <p>
+                    Upload an image and run the AI model
+                    to view its prediction.
+                </p>
+
+            </div>
+
+            <div id="resultContent" class="hidden">
+
+                <div class="prediction-category">
+
+                    <span id="resultEmoji">♻️</span>
+
+                    <div>
+                        <small>Predicted Category</small>
+                        <h2 id="resultCategory">Plastic</h2>
+                    </div>
+
+                </div>
+
+                <div class="confidence-heading">
+                    <span>Model Confidence</span>
+                    <strong id="confidenceText">--</strong>
+                </div>
+
+                <div class="progress-track">
+                    <div id="confidenceBar" class="progress-bar"></div>
+                </div>
+
+                <div class="advice-box">
+
+                    <h4>♻️ Recycling Guidance</h4>
+
+                    <p id="resultAdvice"></p>
+
+                </div>
+
+                <p class="disclaimer">
+                    AI predictions can be incorrect. Check the item
+                    and local waste-disposal rules before recycling.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- RECYCLING GUIDE -->
+
+<section id="guide" class="section guide-section">
+
+    <div class="section-heading">
+
+        <span class="eyebrow">RECYCLE RESPONSIBLY</span>
+
+        <h2>Recycling Guide</h2>
+
+        <p>
+            Learn how to handle common recyclable materials.
+        </p>
+
+    </div>
+
+    <div class="guide-grid">
+
+        <article class="guide-card">
+            <span>🧴</span>
+            <h3>Plastic</h3>
+            <p>Check the plastic type and local recycling rules. Empty containers before disposal.</p>
+        </article>
+
+        <article class="guide-card">
+            <span>📄</span>
+            <h3>Paper</h3>
+            <p>Keep recyclable paper clean and dry. Avoid mixing it with food-contaminated waste.</p>
+        </article>
+
+        <article class="guide-card">
+            <span>🍾</span>
+            <h3>Glass</h3>
+            <p>Check whether your local service accepts the glass item. Handle broken glass carefully.</p>
+        </article>
+
+        <article class="guide-card">
+            <span>🥫</span>
+            <h3>Metal</h3>
+            <p>Empty accepted metal packaging and follow local collection instructions.</p>
+        </article>
+
+        <article class="guide-card">
+            <span>📦</span>
+            <h3>Cardboard</h3>
+            <p>Flatten clean, dry cardboard boxes before placing them in the appropriate collection.</p>
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="section dashboard-section">
+
+    <div class="section-heading">
+
+        <span class="eyebrow">YOUR ACTIVITY</span>
+
+        <h2>Waste Analytics Dashboard</h2>
+
+        <p>
+            Review your saved image-classification activity.
+        </p>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <span>📸</span>
+            <p>Total Predictions</p>
+            <h2 id="totalCount">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>♻️</span>
+            <p>Categories Detected</p>
+            <h2 id="categoryCount">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>🏆</span>
+            <p>Most Common Category</p>
+            <h2 id="topCategory">--</h2>
+        </div>
+
+    </div>
+
+    <div class="chart-card">
+
+        <h3>Predictions by Category</h3>
+
+        <canvas id="wasteChart"></canvas>
+
+    </div>
+
+    <p class="dashboard-note">
+        Statistics are based on saved predictions in this browser,
+        not on actual amounts of waste collected or recycled.
+    </p>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section id="history" class="section history-section">
+
+    <div class="section-heading">
+
+        <span class="eyebrow">PREVIOUS ANALYSIS</span>
+
+        <h2>Detection History</h2>
+
+        <p>
+            Review the waste images you have analyzed.
+        </p>
+
+    </div>
+
+    <div class="history-card">
+
+        <div class="history-top">
+
+            <h3>Recent Predictions</h3>
+
+            <button id="clearHistory" class="btn btn-secondary">
+                Clear History
+            </button>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Confidence</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="historyBody">
+
+                    <tr>
+                        <td colspan="3" class="no-history">
+                            No predictions yet. Analyze an image first.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ECO TIPS -->
+
+<section id="tips" class="section tips-section">
+
+    <div class="section-heading">
+
+        <span class="eyebrow">SMALL STEPS, BIG CHANGE</span>
+
+        <h2>Eco-Friendly Tips</h2>
+
+        <p>
+            Everyday habits can help reduce waste.
+        </p>
+
+    </div>
+
+    <div class="tips-grid">
+
+        <article class="tip-card">
+            <span>🌱</span>
+            <h3>Reduce First</h3>
+            <p>Choose reusable products when practical and avoid unnecessary packaging.</p>
+        </article>
+
+        <article class="tip-card">
+            <span>🗂️</span>
+            <h3>Sort Your Waste</h3>
+            <p>Separate materials according to your local waste collection system.</p>
+        </article>
+
+        <article class="tip-card">
+            <span>🛍️</span>
+            <h3>Reuse Items</h3>
+            <p>Reuse suitable containers and bags instead of immediately discarding them.</p>
+        </article>
+
+        <article class="tip-card">
+            <span>🌍</span>
+            <h3>Spread Awareness</h3>
+            <p>Help friends and family understand responsible waste management.</p>
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section id="about" class="section about-section">
+
+    <div class="about-content">
+
+        <span class="eyebrow">ABOUT OUR PROJECT</span>
+
+        <h2>Technology for a Cleaner Planet 🌍</h2>
+
+        <p>
+            Smart Waste AI is a learning project that explores
+            how deep learning can classify waste images and help
+            users understand responsible disposal practices.
+        </p>
+
+        <h3>Technologies Used</h3>
+
+        <div class="tech-tags">
+            <span>HTML5</span>
+            <span>CSS3</span>
+            <span>JavaScript</span>
+            <span>TensorFlow.js</span>
+            <span>Deep Learning</span>
+            <span>Chart.js</span>
+        </div>
+
+        <p class="about-note">
+            Predictions depend on the trained model and its dataset.
+            This application provides guidance, not a guarantee that
+            an item is accepted by a particular recycling facility.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <a href="#home" class="logo">
+        ♻️ Smart<span>Waste</span> AI
+    </a>
+
+    <p>Built for a smarter, cleaner future.</p>
+
+    <p class="copyright">
+        © 2026 Smart Waste AI | Educational Project
+    </p>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
